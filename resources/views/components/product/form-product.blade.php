@@ -1,6 +1,10 @@
 <div>
-    <button type="button" class="btn {{ $id ? 'btn-default' : 'btn-primary' }}" data-toggle="modal" data-target="#formProduct{{ $id ?? '' }}">
-            {{ $id ? 'Edit' : 'Product Baru' }}
+    <button type="button" class="btn {{ $id ? 'btn-warning' : 'btn-primary' }}" data-toggle="modal" data-target="#formProduct{{ $id ?? '' }}">
+            @if ($id)
+                <i class="fas fa-edit"></i>
+            @else
+            Product baru
+            @endif
     </button>
 
       <div class="modal fade" id="formProduct{{ $id ?? '' }}">
@@ -56,8 +60,8 @@
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
           </div>
           <!-- /.modal-content -->

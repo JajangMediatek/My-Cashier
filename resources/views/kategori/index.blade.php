@@ -34,7 +34,7 @@
                             <td>
                                 <div class="d-flex align-item-center">
                                      <x-kategori.form-kategori :id="$item->id"/>
-                                        <a href="{{ route('master-data.kategori.destroy', $item->id) }}" data-confirm-delete="true" class="btn btn-danger">
+                                        <a href="{{ route('master-data.kategori.destroy', $item->id) }}" data-confirm-delete="true" class="btn btn-danger mx-1">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                 </div>

@@ -13,7 +13,7 @@ class FormProduct extends Component
     /**
      * Create a new component instance.
      */
-    public $id, $nama_product, $harga_jual, $harga_jual_pokok, $stok, $stok_minimal, $is_active, $kategori_id, $kategori;
+    public $id, $nama_product, $harga_jual, $harga_beli_pokok, $stok, $stok_minimal, $is_active, $kategori_id, $kategori;
     public function __construct($id = null)
     {
         $this->kategori = Kategori::all();
@@ -22,7 +22,7 @@ class FormProduct extends Component
             $this->id = $product->id;
             $this->nama_product = $product->nama_produk;
             $this->harga_jual = $product->harga_jual;
-            $this->harga_jual_pokok = $product->harga_beli_pokok;
+            $this->harga_beli_pokok = $product->harga_beli_pokok;
             $this->stok = $product->stok;
             $this->stok_minimal = $product->stok_minimal;
             $this->is_active = $product->is_active;

@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function(){
         Route::prefix('product')->as('product.')->controller(ProductController::class)->group(function(){
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
+            Route::delete('/{id}/destroy', 'destroy')->name('destroy');
         });
     });
 });

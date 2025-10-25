@@ -11,6 +11,7 @@
                 <div class="d-flex justify-content-end mb-2">
                     <x-product.form-product/>
                 </div>
+                <x-alert :errors="$errors" />
                 <thead>
                     <tr>
                         <th>No</th>
@@ -30,12 +31,19 @@
                             <td>{{ $product->sku }}</td>
                             <td>{{ $product->nama_produk }}</td>
                             <td>Rp. {{ number_format($product->harga_jual) }}</td>
-                            <td>Rp. {{ number_format($product->harga_beli) }}</td>
+                            <td>Rp. {{ number_format($product->harga_beli_pokok) }}</td>
                             <td>{{ number_format($product->stok) }}</td>
-                            <td>{{ $product->is_actives }}</td>
                             <td>
-                                <div>
-                                    <x-product.form-product :id="$product-id"/>
+                                <p class="badge {{ $product->is_active ? 'badge-success' : 'badge-danger' }}">
+                                    {{ $product->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                </p>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <x-product.form-product :id="$product->id"/>
+                                        <a href="{{ route('master-data.product.destroy', $product->id) }}" class="btn btn-danger mx-1" data-confirm-delete="true">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                 </div>
                             </td>
                         </tr>
