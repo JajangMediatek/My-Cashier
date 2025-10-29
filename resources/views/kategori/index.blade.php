@@ -2,8 +2,11 @@
 @section('content_title', 'Data Kategori')
 @section('content')
     <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">Data Kategori</h4>
+      <div class="p-2 d-flex justify-content-between border">
+        <h4 class="h5">Data Kategori</h4>
+        <div class="d-flex justify-content-end mb-2">
+                <x-kategori.form-kategori/>
+            </div>
         </div>
         <div class="card-body">
                @if ($errors->any())
@@ -13,9 +16,6 @@
             @endforeach
         </div>
         @endif
-            <div class="d-flex justify-content-end mb-2">
-                <x-kategori.form-kategori/>
-            </div>
             <table class="table table-sm table-responsive" id="table2">
                 <thead>
                     <tr>

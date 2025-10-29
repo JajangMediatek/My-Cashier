@@ -3,14 +3,14 @@
 @section('content')
 
     <div class="card">
-        <div class="card-title">
-            <h4 class="card-header">Data produk</h4>
+        <div class="p-2 d-flex justify-content-between border">
+            <h4 class="h5">Data Produk</h4>
+            <div class="d-flex justify-content-end mb-2">
+                    <x-product.form-product/>
+            </div>
         </div>
         <div class="card-body">
             <table class="table table-sm" id="table2">
-                <div class="d-flex justify-content-end mb-2">
-                    <x-product.form-product/>
-                </div>
                 <x-alert :errors="$errors" />
                 <thead>
                     <tr>

@@ -15,32 +15,47 @@ class Aside extends Component
     public function __construct()
     {
         $this->routes = [
+    [
+        "label" => "Dashboard",
+        "icon" => "fas fa-laptop",
+        "route_name" => "dashboard",
+        "route_active" => "dashboard",
+        "is_dropdown" => false
+    ],
+    [
+        "label" => "Data Users",
+        "icon" => "fas fa-users",
+        "route_name" => "users.index",
+        "route_active" => "users.*",
+        "is_dropdown" => false
+    ],
+    [
+        "label" => "Master Data",
+        "icon" => "fas fa-database",
+        "route_active" => "master-data.*",
+        "is_dropdown" => true,
+        "dropdown" => [
             [
-                "label" => "Dashboard",
-                "icon" => "fas fa-laptop",
-                "route_name" => "dashboard",
-                "route_active" => "dashboard",
-                "is_dropdown" => false
+                "label" => "Kategori",
+                "route_active" => "master-data.kategori.*",
+                "route_name" => "master-data.kategori.index"
             ],
             [
-                "label" => "Master Data",
-                "icon" => "fas fa-database",
-                "route_active" => "master-data.*",
-                "is_dropdown" => true,
-                "dropdown" => [
-                    [
-                    "label" => "Kategori",
-                    "route_active" => "master-data.kategori.*",
-                    "route_name" => "master-data.kategori.index"
-                    ],
-                    [
-                    "label" => "Product",
-                    "route_active" => "master-data.product.*",
-                    "route_name" => "master-data.product.index"
-                    ]
-                ]
-            ]
-        ];
+                "label" => "Product",
+                "route_active" => "master-data.product.*",
+                "route_name" => "master-data.product.index"
+            ],
+        ]
+    ],
+    [
+        "label" => "Penerimaan Barang",
+        "icon" => "fas fa-truck-loading",
+        "route_name" => "penerimaan-barang.index",
+        "route_active" => "penerimaan-barang.*",
+        "is_dropdown" => false
+    ],
+];
+
     }
 
     /**
