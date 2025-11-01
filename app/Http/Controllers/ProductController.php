@@ -79,4 +79,10 @@ class ProductController extends Controller
         $stok = Product::find($id)->stok;
         return response()->json($stok);
     }
+
+    public function cekHarga(){
+        $id = request()->query('id');
+        $harga = Product::find($id)->harga_jual;
+        return response()->json($harga);
+    }
 }

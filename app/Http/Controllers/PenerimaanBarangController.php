@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\itemPenerimaanBarang;
 use App\Models\PenerimaanBarang;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,7 +40,7 @@ class PenerimaanBarangController extends Controller
                 'nama_produk'      => $item['nama_produk'],
                 'qty'              => $item['qty'],
                 'harga_beli'       => $item['harga_beli'],
-                'sub_total'       => $item['sub_total'],
+                'sub_total'        => $item['sub_total'],
             ]);
 
             Product::where('id', $item['produk_id'])->increment('stok', $item['qty']);
@@ -47,5 +48,20 @@ class PenerimaanBarangController extends Controller
         
         toast()->success('Data berhasil ditambahkan');
         return redirect()->route('penerimaan-barang.index');
+    }
+
+    public function laporan(){
+        $penerimaanBarang = PenerimaanBarang::orderBy('created_at', 'desc')->get()->map(function($item){
+            $item->tanggal_penerimaan = Carbon::parse($item->created_at)->locale('id')->translatedFormat('l, d F Y');
+            return $item;
+        });
+        return view('laporan.penerimaan-barang.laporan', compact('penerimaanBarang'));
+    }
+
+    public function detailLaporan(String $nomorPenerimaan){
+        $data = PenerimaanBarang::with('items')->where('nomor_penerimaan', $nomorPenerimaan)->first();
+        $data->tanggal_penerimaan = Carbon::parse($data->created_at)->locale('id')->translatedFormat('l, d F Y');
+        $data->total = $data->items->sum('sub_total');
+        return view('laporan.penerimaan-barang.detail', compact('data'));
     }
 }
