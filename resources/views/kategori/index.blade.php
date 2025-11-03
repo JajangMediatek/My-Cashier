@@ -16,7 +16,7 @@
             @endforeach
         </div>
         @endif
-            <table class="table table-sm table-responsive" id="table2">
+            <table class="table table-sm" id="table2">
                 <thead>
                     <tr>
                         <th>No</th>

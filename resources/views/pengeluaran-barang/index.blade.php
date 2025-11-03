@@ -1,15 +1,13 @@
 @extends('layouts.app')
-@section('content_title', 'Pengeluaran Barang/Transaksi')
+@section('content_title', 'Pengeluaran Barang / Transaksi')
 @section('content')
 <div class="card">
-    <form action="{{ route('penerimaan-barang.store') }}" method="POST" id="form-penerimaan-barang">
+    <x-alert :errors="$errors" />
+    <form action="{{ route('pengeluaran-barang.store') }}" method="POST" id="form-pengeluaran-barang">
         @csrf
         <div id="data-hidden"></div>
             <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
-        <h4 class="h5">Penerimaan Barang</h4>
-        <div>
-            <button type="submit" class="btn btn-primary">Simpan Penerimaan Barang</button>
-        </div>
+        <h4 class="h5">Pengeluaran Barang / Transaksi</h4>
     </div>
     <div class="card-body">
         <div class="d-flex">
@@ -34,11 +32,12 @@
             </div>
         </div>
     </div>
-    </form>
 </div>
-<div class="card">
-    <div class="card-body">
-        <table class="table table-sm" id="table-produk">
+<div class="row">
+    <div class="col-9">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-sm" id="table-produk">
             <thead>
                 <tr>
                     <th>Nama Produk</th>
@@ -48,14 +47,51 @@
                 </tr>
             </thead>
             <tbody></tbody>
-        </table>
+                    </table>
+            </div>
+        </div>
     </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body">
+                <div>
+                    <label for="">Total</label>
+                    <input type="number" class="form-control" id="total" readonly>
+                </div>
+                <div>
+                    <label for="">Kembalian</label>
+                    <input type="number" class="form-control" id="kembalian" readonly>
+                </div>
+                <div>
+                    <label for="">Jumlah Bayar</label>
+                    <input type="number" name="bayar" class="form-control" id="bayar" min="1">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Simpan Transaksi</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 @endsection
 @push('script')
     <script>
         $(document).ready(function () {
             let selectedProduk = {};
+
+            function hitungTotal(){
+                let total = 0;
+
+                $('#table-produk tbody tr').each(function(){
+                    const subTotal = parseInt($(this).find('td:eq(3)').text()) || 0;
+                    total += subTotal;
+                });
+
+                $("#total").val(total);
+            }
+
+        
             $('#select2').select2({
                 theme:'bootstrap',
                 placeholder:'Cari Produk...',
@@ -149,6 +185,7 @@
                     <tr data-id="${produk.id}">
                         <td>${produk.nama_produk}</td>
                         <td>${qty}</td>
+                        <td>${hargaJual}</td>
                         <td>${subTotal}</td>
                         <td>
                             <button class="btn btn-danger btn-sm btn-remove">
@@ -164,31 +201,43 @@
                 $("#qty").val(null);
                 $("#current_stok").val(null);
                 $("#harga_jual").val(null);
+                hitungTotal();
 
             });
 
             $("#table-produk").on("click",".btn-remove", function () {
                 $(this).closest('tr').remove();
+                hitungTotal();
             });
 
-            $("#form-penerimaan-barang").on("submit", function () {
+            $("#form-pengeluaran-barang").on("submit", function () {
                 $("#data-hidden").html("");
 
                 $("#table-produk tbody tr").each(function(index, row){
                     const namaProduk = $(row).find("td:eq(0)").text();
                     const qty = $(row).find("td:eq(1)").text();
                     const produkId = $(row).data("id");
+                    const hargaJual = $(row).find("td:eq(2)").text();
                     const subTotal = $(row).find("td:eq(3)").text();
 
 
                     const inputProduk = `<input type="hidden" name="produk[${index}][nama_produk]"  value="${namaProduk}" />`;
                     const inputQty = `<input type="hidden" name="produk[${index}][qty]" value="${qty}" />`;
                     const inputProdukId = `<input type="hidden" name="produk[${index}][produk_id]" value="${produkId}" />`;
+                    const inputHargaJual = `<input type="hidden" name="produk[${index}][harga_jual]" value="${hargaJual}" />`;
                     const inputSubTotal = `<input type="hidden" name="produk[${index}][sub_total]" value="${subTotal}" />`;
 
-                    $("#data-hidden").append(inputProduk).append(inputQty).append(inputProdukId).append(inputSubTotal);
+                    $("#data-hidden").append(inputProduk).append(inputQty).append(inputProdukId).append(inputSubTotal).append(inputHargaJual);
                 });
 
+            });
+
+            $("#bayar").on("input", function () {
+                const total = parseInt($("#total").val()) || 0;
+                const bayar = parseInt($(this).val()) || 0;
+                const kembalian = bayar - total;
+
+                $("#kembalian").val(kembalian);
             });
 
         });
