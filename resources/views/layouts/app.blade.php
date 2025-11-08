@@ -26,37 +26,64 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="/dashboard" class="nav-link">Home</a>
-      </li>
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="/dashboard" class="nav-link">Home</a>
+    </li>
+  </ul>
 
-    </ul>
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
+    <div class="dropdown">
+      <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+        {{ ucwords(auth()->user()->name) }}
+      </button>
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <div class="dropdown">
-  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-    {{ ucwords(auth()->user()->name) }}
-  </button>
-  <div class="dropdown-menu">
-       <!-- Button trigger modal -->
-<button type="button" class="btn" data-toggle="modal" data-target="#FormGantiPassword">
-  Ganti Password
-</button>
-    <form action="{{ route('logout') }}" method="POST">
-      @csrf
-      <button type="submit" class="btn text-danger">Logout</button>
-    </form>
+      <div class="dropdown-menu dropdown-menu-right">
+        
+        <button type="button" class="dropdown-item" data-toggle="modal" data-target="#FormGantiPassword">
+          Ganti Password
+        </button>
+
+        <button type="button" class="dropdown-item text-danger" data-toggle="modal" data-target="#modalLogout">
+          Logout
+        </button>
+      </div>
+    </div>
+  </ul>
+</nav>
+
+<div class="modal fade" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="modalLogoutLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title text-white" id="modalLogoutLabel">Konfirmasi Logout</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        Apakah kamu yakin ingin keluar dari sesi ini?
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+
+        <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
+          @csrf
+          <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
-    </ul>
-  </nav>
+
   <!-- /.navbar -->
     <x-user.form-ganti-password />
   <!-- Main Sidebar Container -->

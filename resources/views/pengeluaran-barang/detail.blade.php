@@ -6,7 +6,7 @@
         <h4 class="card-title">Laporan Pengeluaran Barang (Transaksi) #{{ $data->nomor_pengeluaran }}</h4>
     </div>
     <div class="card-body">
-        <p class="m-0">tanggal : <strong>{{ $data->tanggal_transaksi }}</strong></p>
+        <p class="m-0">Tanggal : <strong>{{ $data->tanggal_transaksi }}</strong></p>
         <p class="m-0">Nama Petugas : <strong>{{ $data->nama_petugas }}</strong></p>
         <p class="m-0">Jumlah Bayar : <strong>Rp. {{ number_format($data->bayar) }}</strong></p>
         <p class="m-0">Kembalian : <strong>Rp. {{ number_format($data->kembalian) }}</strong></p>

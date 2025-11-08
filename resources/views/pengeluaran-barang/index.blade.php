@@ -42,6 +42,7 @@
                 <tr>
                     <th>Nama Produk</th>
                     <th>Qty</th>
+                    <th>Harga</th>
                     <th>Sub total</th>
                     <th>Opsi</th>
                 </tr>
@@ -92,123 +93,180 @@
             }
 
         
-            $('#select2').select2({
-                theme:'bootstrap',
-                placeholder:'Cari Produk...',
-                ajax:{
-                    url:"{{ route('get-data.produk') }}",
-                    dataType:'json',
-                    delay:250,
-                    data:(params) => {
-                       return {
-                        search:params.term
-                       }
-                    },
-                    processResults:(data)=>{
-                        data.forEach(item => {
-                            selectedProduk[item.id] = item;
-                        })
+          $('#select2').select2({
+        theme:'bootstrap',
+        placeholder:'Cari Produk...',
+        ajax:{
+            url:"{{ route('get-data.produk') }}",
+            dataType:'json',
+            delay:250,
+            data:(params) => ({ search: params.term }),
+            processResults:(data)=>{
+                // simpan object produk (as-is) ke selectedProduk bila ada
+                data.forEach(item => {
+                    selectedProduk[item.id] = item;
+                });
 
-                        return {
-                            results:data.map((item)=>{
-                                return {
-                                    id:item.id,
-                                    text:item.nama_produk
-                                }
-                            })
-                        }
-                    },
-                    cache:true
+                return {
+                    results: data.map((item)=>{
+                        return { id:item.id, text:item.nama_produk }
+                    })
+                }
+            },
+            cache:true
                 },
+
                 minimumInputLength:3
-            })  
-
-            $("#select2").on("change", function (e) {
-                let id = $(this).val();
-
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('get-data.cek-stok') }}",
-                    data: {
-                        id:id
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        $("#current_stok").val(response);
-                    }
-                });
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('get-data.cek-harga') }}",
-                    data: {
-                        id:id
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        $("#harga_jual").val(response);
-                    }
-                });
             });
 
-            $("#btn-add").on("click", function () {
-                const selectedId = $("#select2").val();
-                const qty = $("#qty").val();
-                const currentStok = $("#current_stok").val();
-                const hargaJual = $("#harga_jual").val();
-                const subTotal = parseInt(qty) * parseInt(hargaJual);
+ // ketika user pilih produk di select2 => ambil stok & harga dan simpan ke selectedProduk
+    $("#select2").on("change", function (e) {
+        let id = $(this).val();
 
-                if(!selectedId || !qty){
-                    alert('Harap pilih produk dan tentukan jumlahnya');
-                return;
+        if (!id) {
+            // clear fields
+            $("#current_stok").val('');
+            $("#harga_jual").val('');
+            return;
+        }
+
+
+        // cek stok
+        $.ajax({
+            type: "GET",
+            url: "{{ route('get-data.cek-stok') }}",
+            data: { id: id },
+            dataType: "json",
+            success: function (response) {
+                // response diharapkan angka stok
+                const stok = parseInt(response) || 0;
+                $("#current_stok").val(stok);
+
+                // simpan ke selectedProduk agar selalu tersedia saat validasi
+                if (selectedProduk[id]) selectedProduk[id].stok = stok;
+                else selectedProduk[id] = { id: id, stok: stok };
+            },
+            error: function () {
+                $("#current_stok").val('');
+            }
+        });
+
+ // cek harga
+        $.ajax({
+            type: "GET",
+            url: "{{ route('get-data.cek-harga') }}",
+            data: { id: id },
+            dataType: "json",
+            success: function (response) {
+                const harga = parseInt(response) || 0;
+                $("#harga_jual").val(harga);
+
+                if (selectedProduk[id]) selectedProduk[id].harga_jual = harga;
+                else selectedProduk[id] = { id: id, harga_jual: harga };
+            },
+            error: function () {
+                $("#harga_jual").val('');
+            }
+        });
+    });
+
+              // tombol tambah
+    $("#btn-add").on("click", function () {
+        const selectedId = $("#select2").val();
+        const qtyRaw = $("#qty").val();
+        const qty = parseInt(qtyRaw);
+        // prefer stok dari selectedProduk, fallback ke field current_stok
+        const currentStokField = $("#current_stok").val();
+        const currentStok = selectedProduk[selectedId] && selectedProduk[selectedId].stok !== undefined
+            ? parseInt(selectedProduk[selectedId].stok)
+            : (parseInt(currentStokField) || 0);
+        const hargaJual = selectedProduk[selectedId] && selectedProduk[selectedId].harga_jual !== undefined
+            ? parseInt(selectedProduk[selectedId].harga_jual)
+            : (parseInt($("#harga_jual").val()) || 0);
+
+                 if (!selectedId || isNaN(qty) || qty <= 0) {
+            alert('Harap pilih produk dan tentukan jumlah yang valid!');
+            return;
+        }
+
+                // jika stok tidak tersedia / stok = 0
+        if (isNaN(currentStok) || currentStok <= 0) {
+            alert('Stok produk tidak tersedia atau 0.');
+            return;
+        }
+
+                 // cek qty vs stok
+        // jika produk sudah ada di tabel, kita harus menjumlahkan current qty di tabel + qty yang akan ditambahkan
+        const produk = selectedProduk[selectedId] || {};
+        let sudahAda = false;
+        let tableCurrentQty = 0;
+
+        $('#table-produk tbody tr').each(function(){
+            const rowId = $(this).data('id')?.toString();
+            if (rowId === selectedId.toString()) {
+                sudahAda = true;
+                tableCurrentQty = parseInt($(this).find("td:eq(1)").text()) || 0;
+            }
+        });
+
+        const newQty = tableCurrentQty + qty;
+        const productStock = currentStok;
+
+        if (newQty > productStock) {
+            alert(`Stok tidak cukup! Tersedia hanya ${productStock} (sudah menambahkan ${tableCurrentQty}).`);
+            return;
+        }
+
+        // jika item sudah ada, update qty di tabel
+        if (sudahAda) {
+            $('#table-produk tbody tr').each(function(){
+                const rowId = $(this).data('id')?.toString();
+                if (rowId === selectedId.toString()) {
+                    $(this).find("td:eq(1)").text(newQty);
+                    // update subtotal
+                    const subTotal = newQty * hargaJual;
+                    $(this).find("td:eq(3)").text(subTotal);
                 }
-
-                const produk = selectedProduk[selectedId];
-                let exist = false;
-                $('#table-produk tbody tr').each(function(){
-                    const rowProduk = $(this).find("td:first").text();
-
-                    if (rowProduk === produk.nama_produk) {
-                        let currentQty = parseInt($(this).find("td:eq(1)").text());
-                        let newQty = currentQty + parseInt(qty);
-
-                        $(this).find("td:eq(1)").text(newQty);
-                        exist = true;
-                        return false;
-                    }
-                })
-
-                if (!exist) {
-                    // tambahkan data baru
-                    const row = `
-                    <tr data-id="${produk.id}">
-                        <td>${produk.nama_produk}</td>
-                        <td>${qty}</td>
-                        <td>${hargaJual}</td>
-                        <td>${subTotal}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm btn-remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    `
-                    $("#table-produk tbody").append(row);
-                }
-
-                $("#select2").val(null).trigger("change");
-                $("#qty").val(null);
-                $("#current_stok").val(null);
-                $("#harga_jual").val(null);
-                hitungTotal();
-
             });
+            hitungTotal();
+            // reset input
+            $("#select2").val(null).trigger("change");
+            $("#qty").val(null);
+            $("#current_stok").val(null);
+            $("#harga_jual").val(null);
+            return;
+        }
 
-            $("#table-produk").on("click",".btn-remove", function () {
-                $(this).closest('tr').remove();
-                hitungTotal();
-            });
+        // kalau belum ada, tambahkan baris baru
+        const subTotal = qty * hargaJual;
+        const row = `
+            <tr data-id="${produk.id}">
+                <td>${produk.nama_produk ?? ''}</td>
+                <td>${qty}</td>
+                <td>${hargaJual}</td>
+                <td>${subTotal}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm btn-remove">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $("#table-produk tbody").append(row);
+
+        // reset input
+        $("#select2").val(null).trigger("change");
+        $("#qty").val(null);
+        $("#current_stok").val(null);
+        $("#harga_jual").val(null);
+        hitungTotal();
+    });
+
+    // hapus baris
+    $("#table-produk").on("click",".btn-remove", function () {
+        $(this).closest('tr').remove();
+        hitungTotal();
+    });
 
             $("#form-pengeluaran-barang").on("submit", function () {
                 $("#data-hidden").html("");

@@ -16,6 +16,12 @@ class PenerimaanBarangController extends Controller
     }
 
     public function store(Request $request){
+
+        if(empty($request->produk)){
+            toast()->error('Tidak ada produk yang dipilih');
+            return redirect()->back();
+        }
+        
         $request->validate([
             'distributor'  => 'required',
             'nomor_faktur' => 'required',

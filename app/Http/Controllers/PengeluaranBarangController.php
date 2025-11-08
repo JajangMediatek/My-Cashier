@@ -46,6 +46,27 @@ class PengeluaranBarangController extends Controller
             ]);
         }
 
+   // VALIDASI STOK (poin penting)
+    foreach ($produk as $item) {
+        // pastikan ada produk_id
+        if (!isset($item['produk_id'])) {
+            toast()->error('Data produk tidak lengkap');
+            return redirect()->back()->withInput();
+        }
+
+        $product = Product::find($item['produk_id']);
+        if (!$product) {
+            toast()->error("Produk dengan ID {$item['produk_id']} tidak ditemukan");
+            return redirect()->back()->withInput();
+        }
+
+        $qty = intval($item['qty']);
+        if ($product->stok < $qty) {
+            toast()->error("Stok untuk produk {$product->nama_produk} tidak cukup. Tersisa: {$product->stok}");
+            return redirect()->back()->withInput();
+        }
+    }
+
         $data = PengeluaranBarang::create([
             'nomor_pengeluaran' => PengeluaranBarang::nomorPengeluaran(),
             'nama_petugas' => Auth::user()->name,

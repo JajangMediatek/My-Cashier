@@ -9,8 +9,9 @@ class ProductController extends Controller
 {
     public function index(){
         $products = Product::all();
+        $stokMenipis = Product::whereColumn('stok', '<=', 'stok_minimal')->get();
         confirmDelete('Hapus Data', 'Apakah anda yakin ingin menghapus data ini?');
-        return view('product.index', compact('products'));
+        return view('product.index', compact('products', 'stokMenipis'));
     }
 
 
