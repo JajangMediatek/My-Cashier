@@ -71,7 +71,12 @@ class ProductController extends Controller
         $search = request()->query('search');
 
         $query = Product::query()->where('is_active', 1);
-        $product = $query->where('nama_produk', 'like', '%'. $search . '%')->get();
+        $product = $query->where('nama_produk', 'like', '%'. $search . '%')->get([
+            'id',
+            'nama_produk',
+            'stok',
+            'harga_beli_pokok as harga_beli'
+        ]);
         return response()->json($product);
     }
 

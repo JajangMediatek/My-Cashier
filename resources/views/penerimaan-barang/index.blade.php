@@ -43,7 +43,7 @@
             </div>
             <div>
                 <label for="">Harga Beli</label>
-                <input type="number" id="harga_beli" class="form-control mx-1" style="width: 300px" min="1">
+                <input type="number" id="harga_beli" class="form-control mx-1" style="width: 300px" readonly>
             </div>
             <div style="padding-top: 32px">
                 <button type="button" class="btn btn-dark" id="btn-add">Tambahkan</button>
@@ -106,6 +106,7 @@
 
             $("#select2").on("change", function (e) {
                 let id = $(this).val();
+                let produk = selectedProduk[id];
 
                 $.ajax({
                     type: "GET",
@@ -119,6 +120,12 @@
                         $("#current_stok").val(response);
                     }
                 });
+
+                    // isi harga beli otomatis
+                    $("#harga_beli").val(produk.harga_beli);
+
+                    // bikin input nya readonly biar gabisa diganti
+                    $("#harga_beli").prop("readonly", true);
             });
 
             $("#btn-add").on("click", function () {

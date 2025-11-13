@@ -1,8 +1,13 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <style>
+      .brand-link .brand-image {
+    margin-right: 6px !important;
+}
+    </style>
     <!-- Brand Logo -->
-    <a href="/dashboard" class="brand-link text-center">
-      {{-- <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
-      <span class="brand-text font-weight-light text-center">{{ env('APP_NAME') }}</span>
+    <a href="/dashboard" class="brand-link d-flex align-items-center justify-content-center">
+      <img src="{{ asset('images/logo.png') }}" alt="" class="brand-image img-circle elevation-3 mr-2" style="opacity: .8; width: 35px; height: 35px;">
+      <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
     </a>
 
     <!-- Sidebar -->

@@ -44,6 +44,12 @@ class KategoriController extends Controller
 
     public function destroy(String $id){
         $kategori = Kategori::findOrFail($id);
+
+        if ($kategori->products()->exists()) {
+        toast()->error('Kategori tidak dapat dihapus karena masih digunakan produk!');
+        return redirect()->route('master-data.kategori.index');
+        }
+
         $kategori->delete();
         toast()->success('Data berhasil dihapus');
         return redirect()->route('master-data.kategori.index');
