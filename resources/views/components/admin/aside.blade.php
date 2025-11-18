@@ -1,8 +1,24 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <style>
       .brand-link .brand-image {
-    margin-right: 6px !important;
-}
+          margin-right: 6px !important;
+      }
+
+      .sidebar-mini.sidebar-collapse .brand-link {
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+      }
+
+      .sidebar-mini.sidebar-collapse .brand-link .brand-image {
+          margin: 0 !important;
+      }
+
+      .sidebar-mini.sidebar-collapse .brand-link .brand-text {
+          display: none !important; 
+      }
     </style>
     <!-- Brand Logo -->
     <a href="/dashboard" class="brand-link d-flex align-items-center justify-content-center">
