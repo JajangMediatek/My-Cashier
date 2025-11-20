@@ -46,9 +46,9 @@ class PengeluaranBarangController extends Controller
             ]);
         }
 
-   // VALIDASI STOK (poin penting)
+   // VALIDASI STOK (ingat!!!!)
     foreach ($produk as $item) {
-        // pastikan ada produk_id
+        // produk_id kudu ayaan
         if (!isset($item['produk_id'])) {
             toast()->error('Data produk tidak lengkap');
             return redirect()->back()->withInput();
@@ -93,7 +93,7 @@ class PengeluaranBarangController extends Controller
 
     public function laporan(){
         $data = PengeluaranBarang::orderBy('created_at', 'desc')->get()->map(function ($item){
-            $item->tanggal_transaksi = Carbon::parse($item->created_at)->locale('id')->translatedFormat('l,d F Y');
+            $item->tanggal_transaksi = Carbon::parse($item->created_at)->locale('id')->translatedFormat('l, d F Y');
             return $item;
         });
 

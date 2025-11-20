@@ -36,7 +36,11 @@ class ProductController extends Controller
             'kategori_id.required'=> 'Kategori harus diisi',
             'kategori_id.exists' => 'Kategori tidak valid',
             'stok.required' => 'Stok harus diisi',
-            'stok.numeric' => 'Stok harus berupa angka'
+            'stok.numeric' => 'Stok harus berupa angka',
+            'stok.min' => 'Stok Minimal 0',
+            'stok_minimal.required' => 'Stok Minimal harus diisi',
+            'stok_minimal.numeric' => 'Stok Minimal harus berupa angka',
+            'stok_minimal.min' => 'Stok minimal terlalu kecil'
         ]);
 
         $newRequest = [
