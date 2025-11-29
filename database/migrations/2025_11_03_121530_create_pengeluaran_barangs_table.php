@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nomor_pengeluaran');
             $table->string('nama_petugas');
-            $table->integer('total_harga');
-            $table->integer('bayar');
-            $table->integer('kembalian');
+            $table->decimal('total_harga', 14, 2);
+            $table->decimal('bayar', 14, 2);
+            $table->decimal('kembalian', 14, 2);
             $table->timestamps();
         });
     }

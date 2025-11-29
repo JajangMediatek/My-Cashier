@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nomor_penerimaan');
             $table->string('nama_produk');
-            $table->string('qty');
-            $table->integer('harga_beli');
-            $table->integer('sub_total');
+            $table->bigInteger('qty');
+            $table->decimal('harga_beli', 14, 2);
+            $table->decimal('sub_total', 14, 2);
             $table->timestamps();
         });
     }

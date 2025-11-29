@@ -16,7 +16,7 @@ class PengeluaranBarangController extends Controller
     }
 
     public function store(Request $request){    
-        if(empty($request->produk)){
+        if (!$request->has('produk') || !is_array($request->produk)) {
             toast()->error('Tidak ada produk yang dipilih');
             return redirect()->back();
         }

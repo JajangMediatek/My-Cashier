@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -17,12 +18,18 @@ class ProductController extends Controller
 
     public function store(Request $request){
         $id = $request->id;
+
         $request->validate([
-            'nama_product'    => 'required|unique:products,nama_produk,'.$id,
-            'harga_jual'      => 'required|numeric|min:0',
+            'nama_product'    => [
+                'required',
+                Rule::unique('products', 'nama_produk')
+                    ->where(fn ($q) => $q->whereRaw('LOWER(nama_produk) = LOWER(?)', [$request->nama_product]))
+                    ->ignore($id),
+            ],
+            'harga_jual'      => 'required|numeric|min:0|max:100000000000.00',
             'harga_beli_pokok' => 'required|numeric|min:0',
             'kategori_id'     => 'required|exists:kategoris,id',
-            'stok'            => 'required|numeric|min:0',
+            'stok'            => !$id ? 'required|numeric|min:0|max:100000000' : 'nullable|numeric|min:0|max:100000000',
             'stok_minimal'    => 'required|numeric|min:0',
         ],[
             'nama_product.required' => 'Nama produk harus diisi',
@@ -30,38 +37,46 @@ class ProductController extends Controller
             'harga_jual.required' => 'Harga jual harus diisi',
             'harga_jual.numeric' => 'Harga jual harus berupa angka',
             'harga_jual.min' => 'Harga jual minimal 0',
+            'harga_jual.max' => 'Harga jual terlalu besar',
             'harga_beli_pokok.required' => 'Harga beli pokok harus diisi',
             'harga_beli_pokok.numeric' => 'Harga beli pokok harus berupa angka',
             'harga_beli_pokok.min' => 'Harga beli pokok minimal 0',
+            'harga_beli_pokok.max' => 'Harga beli pokok terlalu besar',
             'kategori_id.required'=> 'Kategori harus diisi',
             'kategori_id.exists' => 'Kategori tidak valid',
             'stok.required' => 'Stok harus diisi',
             'stok.numeric' => 'Stok harus berupa angka',
             'stok.min' => 'Stok Minimal 0',
+            'stok.max' => 'Stok terlalu besar',
             'stok_minimal.required' => 'Stok Minimal harus diisi',
             'stok_minimal.numeric' => 'Stok Minimal harus berupa angka',
-            'stok_minimal.min' => 'Stok minimal terlalu kecil'
+            'stok_minimal.min' => 'Stok minimal terlalu kecil',
+            'stok_minimal.max' => 'Stok minimal terlalu besar',
         ]);
 
         $newRequest = [
-                'id' => $id,
-                'nama_produk' => $request->nama_product,
-                'harga_jual' => $request->harga_jual,
-                'harga_beli_pokok' => $request->harga_beli_pokok,
-                'kategori_id' => $request->kategori_id,
-                'stok' => $request->stok,
-                'stok_minimal' => $request->stok_minimal,
-                'is_active' => $request->is_active ? true : false,
+            'id' => $id,
+            'nama_produk' => $request->nama_product,
+            'harga_jual' => $request->harga_jual,
+            'harga_beli_pokok' => $request->harga_beli_pokok,
+            'kategori_id' => $request->kategori_id,
+            'stok_minimal' => $request->stok_minimal,
+            'is_active' => $request->is_active ? true : false,
         ];
+
+        // Jika CREATE
         if (!$id) {
+            $newRequest['stok'] = $request->stok;
             $newRequest['sku'] = Product::nomorSKU();
         }
+
         Product::updateOrCreate(
-            ["id" => $id],
+            ['id' => $id],
             $newRequest
-            );
-            toast()->success('Data berhasil disimpan');
-            return redirect()->route('master-data.product.index');
+        );
+
+        toast()->success('Data berhasil disimpan');
+        return redirect()->route('master-data.product.index');
     }
 
     public function destroy(String $id){

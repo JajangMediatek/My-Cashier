@@ -40,7 +40,8 @@ class UserController extends Controller
     }
 
     public function gantiPassword(Request $request){
-        $request->validate([
+        try {
+            $request->validate([
             'old_password' => 'required',
             'password' => 'required|min:8|confirmed'
             // 'password'     => [Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
@@ -51,12 +52,19 @@ class UserController extends Controller
             'password.confirmed' => 'Password baru tidak sama dengan konfirmasi password',
         ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+        $error = $e->validator->errors()->first();
+
+        toast()->error($error);
+        return back(); // atau redirect()->route('dashboard');
+        }
+        
         $users = User::find(Auth::id());
 
         // cek old password
         if (!Hash::check($request->old_password , $users->password)){
             toast()->error('Password lama tidak sesuai');
-            return redirect()->route('dashboard');
+            return redirect()->back();
         }
 
         // update password
@@ -65,7 +73,7 @@ class UserController extends Controller
         ]);
 
         toast()->success('Password berhasil diubah');
-        return redirect()->route('dashboard');
+        return redirect()->back();
     }
 
     public function destroy(String $id){

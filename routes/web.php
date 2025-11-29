@@ -7,6 +7,8 @@ use App\Http\Controllers\PenerimaanBarangController;
 use App\Http\Controllers\PengeluaranBarangController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PembuanganBarangController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -60,15 +62,23 @@ Route::middleware('auth')->group(function(){
         Route::post('/', 'store')->name('store');
     });
     
+    Route::prefix('pembuangan-barang')->as('pembuangan-barang.')->controller(PembuanganBarangController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+    });
 
     Route::prefix('laporan')->as('laporan.')->group(function(){
         Route::prefix('penerimaan-barang')->as('penerimaan-barang.')->controller(PenerimaanBarangController::class)->group(function(){
             Route::get('/laporan', 'laporan')->name('laporan');
-            Route::get('/laporan/{momor_penerimaan}/detail', 'detailLaporan')->name('detail-laporan');
+            Route::get('/laporan/{nomor_penerimaan}/detail', 'detailLaporan')->name('detail-laporan');
         });
         Route::prefix('pengeluaran-barang')->as('pengeluaran-barang.')->controller(PengeluaranBarangController::class)->group(function(){
             Route::get('/laporan', 'laporan')->name('laporan');
-            Route::get('/laporan/{momor_pengeluaran}/detail', 'detailLaporan')->name('detail-laporan');
+            Route::get('/laporan/{nomor_pengeluaran}/detail', 'detailLaporan')->name('detail-laporan');
+        });
+        Route::prefix('pembuangan-barang')->as('pembuangan-barang.')->controller(PembuanganBarangController::class)->group(function(){
+            Route::get('/laporan', 'laporan')->name('laporan');
+            Route::get('/laporan/{nomor_pembuangan}/detail', 'detailLaporan')->name('detail-laporan');
         });
     });
 });

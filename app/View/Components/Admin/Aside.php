@@ -55,10 +55,17 @@ class Aside extends Component
         "is_dropdown" => false
     ],
     [
-        "label" => "Pengeluaran Barang",
+        "label" => "Transaksi",
         "icon" => "fas fa-store",
         "route_name" => "pengeluaran-barang.index",
         "route_active" => "pengeluaran-barang.*",
+        "is_dropdown" => false
+    ],
+    [
+        "label" => "Pembuangan Barang",
+        "icon" => "fas fa-dumpster",
+        "route_name" => "pembuangan-barang.index",
+        "route_active" => "pembuangan-barang.*",
         "is_dropdown" => false
     ],
     [
@@ -73,9 +80,14 @@ class Aside extends Component
                 "route_name" => "laporan.penerimaan-barang.laporan"
             ],
             [
-                "label" => "Pengeluaran Barang (Transaksi)",
+                "label" => "Transaksi",
                 "route_active" => "laporan.pengeluaran-barang.*",
                 "route_name" => "laporan.pengeluaran-barang.laporan"
+            ],
+            [
+                "label" => "Pembuangan Barang",
+                "route_active" => "laporan.pembuangan-barang.*",
+                "route_name" => "laporan.pembuangan-barang.laporan"
             ],
         ]
     ],

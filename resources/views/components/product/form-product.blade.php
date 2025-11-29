@@ -42,10 +42,12 @@
                 <label for="">Harga Beli Pokok</label>
                 <input type="number" name="harga_beli_pokok" id="harga_beli_pokok" class="form-control" value="{{ $id ? $harga_beli_pokok : old('harga_beli_pokok') }}">
               </div>
-              <div class="form-group my-1">
+              @if (!$id)
+                <div class="form-group my-1">
                 <label for="">Stok Persediaan</label>
                 <input type="number" name="stok" id="stok" class="form-control" value="{{ $id ? $stok : old('stok') }}">
               </div>
+              @endif
               <div class="form-group my-1">
                 <label for="">Stok Minimal</label>
                 <input type="number" name="stok_minimal" id="stok_minimal" class="form-control" value="{{ $id ? $stok_minimal : old('stok_minimal') }}">

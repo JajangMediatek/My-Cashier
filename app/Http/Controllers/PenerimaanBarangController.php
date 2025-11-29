@@ -17,7 +17,7 @@ class PenerimaanBarangController extends Controller
 
     public function store(Request $request){
 
-        if(empty($request->produk)){
+        if (!$request->has('produk') || !is_array($request->produk)) {
             toast()->error('Tidak ada produk yang dipilih');
             return redirect()->back();
         }
@@ -51,7 +51,6 @@ class PenerimaanBarangController extends Controller
 
             Product::where('id', $item['produk_id'])->increment('stok', $item['qty']);
         }
-        
         toast()->success('Data berhasil ditambahkan');
         return redirect()->route('penerimaan-barang.index');
     }

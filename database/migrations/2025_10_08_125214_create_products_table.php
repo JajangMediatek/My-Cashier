@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('kategori_id')->nullable()->constrained('kategoris')->nullOnDelete();
             $table->string('nama_produk');
             $table->string('sku')->unique()->comment('SKU (Stock Keeping Unit) / Kode Produk');
-            $table->integer('harga_jual');
-            $table->integer('harga_beli_pokok');
-            $table->integer('stok');
-            $table->integer('stok_minimal');
+            $table->decimal('harga_jual', 14, 2);
+            $table->decimal('harga_beli_pokok', 14, 2);
+            $table->bigInteger('stok');
+            $table->bigInteger('stok_minimal');
             $table->boolean('is_active')->default(false);
             $table->timestamps();
         });

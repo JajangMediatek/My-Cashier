@@ -40,6 +40,9 @@
             <div>
                 <label for="">Qty</label>
                 <input type="number" id="qty" class="form-control mx-1" style="width: 100px" min="1">
+                @error('qty')
+                <small class="text-danger">{{ $message }}</small>
+                @enderror                
             </div>
             <div>
                 <label for="">Harga Beli</label>
@@ -135,7 +138,7 @@
                 const hargaBeli = $('#harga_beli').val();
                 const subTotal = parseInt(qty) * parseInt(hargaBeli);
 
-                if(!selectedId || !qty){
+                if(!selectedId || isNaN(qty) || qty <= 0){
                     alert('Harap pilih produk dan tentukan jumlahnya');
                 return;
                 }
