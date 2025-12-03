@@ -27,7 +27,8 @@ class Aside extends Component
         "icon" => "fas fa-users",
         "route_name" => "users.index",
         "route_active" => "users.*",
-        "is_dropdown" => false
+        "is_dropdown" => false,
+        "admin_only" => true
     ],
     [
         "label" => "Master Data",

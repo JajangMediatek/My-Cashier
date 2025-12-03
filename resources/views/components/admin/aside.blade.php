@@ -44,6 +44,11 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 @foreach ($routes as $route)
+    @if (isset($route['admin_only']) && $route['admin_only'] === true)
+        @if (auth()->user()->role !== 'admin')
+            @continue
+        @endif
+    @endif
     @if (!$route['is_dropdown'])
         <li class="nav-item">
             <a href="{{ route($route['route_name']) }}" 

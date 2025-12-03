@@ -28,12 +28,14 @@ Route::middleware('auth')->group(function(){
         Route::get('cek-harga-produk', [ProductController::class, 'cekHarga'])->name('cek-harga');
     });
 
+    Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('users')->as('users.')->controller(UserController::class)->group(function (){
         Route::get('/', 'index')->name('index');        
         Route::post('/', 'store')->name('store');        
         Route::delete('/{id}/destroy', 'destroy')->name('destroy');     
         Route::post('/ganti-password', 'gantiPassword')->name('ganti-password');
         Route::post('/reset-password', 'resetPassword')->name('reset-password');   
+    }); 
     });
 
 
